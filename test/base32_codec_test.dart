@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:base32_codec/base32_codec.dart';
@@ -95,6 +96,68 @@ void main() {
     test('"foobar"', () {
       expect(codec.encode(ascii.encode('foobar')), equals('CSQPYRK1E8'));
       expect(codec.decode('CSQPYRK1E8'), equals(ascii.encode('foobar')));
+    });
+  });
+
+  group('Chunked Conversion', () {
+    test('RFC 4648 encoding', () async {
+      final codec = Base32Codec();
+      final stream = Stream.fromIterable([
+        ascii.encode('foo'),
+        ascii.encode('bar'),
+      ]);
+      final encoded = await stream.transform(codec.encoder).join();
+      expect(encoded, equals('MZXW6YTBOI======'));
+    });
+
+    test('RFC 4648 decoding', () async {
+      final codec = Base32Codec();
+      final stream = Stream.fromIterable(['MZXW6YT', 'BOI======']);
+      final decoded = await stream
+          .transform(codec.decoder)
+          .expand((x) => x)
+          .toList();
+      expect(decoded, equals(ascii.encode('foobar')));
+    });
+
+    test('RFC 4648 Hex encoding', () async {
+      final codec = Base32Codec.hex();
+      final stream = Stream.fromIterable([
+        ascii.encode('foo'),
+        ascii.encode('bar'),
+      ]);
+      final encoded = await stream.transform(codec.encoder).join();
+      expect(encoded, equals('CPNMUOJ1E8======'));
+    });
+
+    test('RFC 4648 Hex decoding', () async {
+      final codec = Base32Codec.hex();
+      final stream = Stream.fromIterable(['CPNMUOJ', '1E8======']);
+      final decoded = await stream
+          .transform(codec.decoder)
+          .expand((x) => x)
+          .toList();
+      expect(decoded, equals(ascii.encode('foobar')));
+    });
+
+    test('Crockford encoding', () async {
+      final codec = Base32Codec.crockford();
+      final stream = Stream.fromIterable([
+        ascii.encode('foo'),
+        ascii.encode('bar'),
+      ]);
+      final encoded = await stream.transform(codec.encoder).join();
+      expect(encoded, equals('CSQPYRK1E8'));
+    });
+
+    test('Crockford decoding', () async {
+      final codec = Base32Codec.crockford();
+      final stream = Stream.fromIterable(['CSQPY', 'RK1E8']);
+      final decoded = await stream
+          .transform(codec.decoder)
+          .expand((x) => x)
+          .toList();
+      expect(decoded, equals(ascii.encode('foobar')));
     });
   });
 }

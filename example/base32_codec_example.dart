@@ -1,3 +1,4 @@
+// Ignore lint for simple demo
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
