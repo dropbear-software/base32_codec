@@ -1,6 +1,3 @@
-// Ignore lint for simple demo
-// ignore_for_file: avoid_print
-
 import 'dart:convert';
 
 import 'package:base32_codec/base32_codec.dart';

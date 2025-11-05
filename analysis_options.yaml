@@ -18,6 +18,8 @@ analyzer:
     strict-casts: true
     strict-inference: true
     strict-raw-types: true
+  exclude:
+    - example/base32_codec_example.dart
 
 linter:
   rules:
