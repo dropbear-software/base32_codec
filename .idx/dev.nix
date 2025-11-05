@@ -6,6 +6,7 @@
   # Use https://search.nixos.org/packages to find packages
   packages = [
     pkgs.dart
+    pkgs.openssh
   ];
   # Sets environment variables in the workspace
   env = { };
@@ -23,7 +24,7 @@
       };
       # Runs when a workspace is (re)started
       onStart= {
-        run-server = "dart run watcher.dart";
+
       };
     };
   };
