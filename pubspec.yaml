@@ -1,14 +1,15 @@
 name: base32_codec
-description: A starting point for Dart libraries or applications.
+description: A dependency free library for encoding and decoding Base32 data.
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
+repository: https://github.com/dropbear-software/base32_codec
+issue_tracker: https://github.com/dropbear-software/base32_codec/issues
+topics:
+  - base32
+  - rfc4648
+  - codec
 
 environment:
   sdk: ^3.9.3
-
-# Add regular dependencies here.
-dependencies:
-  # path: ^1.9.0
 
 dev_dependencies:
   lints: ^6.0.0

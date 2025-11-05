@@ -1,8 +1,8 @@
-/// Support for doing something awesome.
+/// A library for encoding and decoding Base32 data.
 ///
-/// More dartdocs go here.
+/// This library provides a `Base32Codec` that can be used to encode and decode
+/// data in the Base32 format. It supports multiple variants of the Base32
+/// alphabet, including RFC 4648, RFC 4648 "Hex", and Crockford.
 library;
 
-export 'src/base32_codec_base.dart';
-
-// TODO: Export any libraries intended for clients of this package.
+export 'src/codec.dart';
