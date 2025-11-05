@@ -30,18 +30,18 @@ final class Base32Codec extends Codec<Uint8List, String> {
 
   /// Creates a new [Base32Codec] with the RFC 4648 alphabet.
   const Base32Codec()
-      : _encoder = const Base32Encoder(),
-        _decoder = const Base32Decoder();
+    : _encoder = const Base32Encoder(),
+      _decoder = const Base32Decoder();
 
   /// Creates a new [Base32Codec] with the RFC 4648 hex alphabet.
   const Base32Codec.hex()
-      : _encoder = const Base32Encoder.hex(),
-        _decoder = const Base32Decoder.hex();
+    : _encoder = const Base32Encoder.hex(),
+      _decoder = const Base32Decoder.hex();
 
   /// Creates a new [Base32Codec] with the Crockford alphabet.
   const Base32Codec.crockford()
-      : _encoder = const Base32Encoder.crockford(),
-        _decoder = const Base32Decoder.crockford();
+    : _encoder = const Base32Encoder.crockford(),
+      _decoder = const Base32Decoder.crockford();
 
   @override
   Converter<String, Uint8List> get decoder => _decoder;
