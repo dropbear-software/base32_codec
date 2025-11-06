@@ -26,6 +26,13 @@ This plan outlines the steps to implement performance benchmarks for the `base32
 *   Ran all required code quality and testing tools.
 *   No surprises or deviations from the plan.
 
+**Phase 4 - 2025-11-06**
+
+*   Updated `README.md` with a new section on performance benchmarks and how to run them.
+*   Updated `GEMINI.md` to reflect the addition of performance benchmarks.
+*   Ran all required code quality and testing tools.
+*   No surprises or deviations from the plan.
+
 ## Phase 1: Setup `benchmark_harness` and initial synchronous benchmarks
 
 - [x] Run all tests to ensure the project is in a good state before starting modifications.
@@ -92,7 +99,7 @@ This plan outlines the steps to implement performance benchmarks for the `base32
 - [x] Run the `analyze_files` tool one more time and fix any issues.
 - [x] Run any tests to make sure they all pass.
 - [x] Run `dart_format` to make sure that the formatting is correct.
-- [x] Re-read the `MODIFICATION_IMPLEMENTATION.md` file to see what, if anything, has changed in the implementation plan, and if it has changed, take care of anything the changes imply.
+- [x] Re-read the `MODIFICATION_IMPLEMENTATION.1md` file to see what, if anything, has changed in the implementation plan, and if it has changed, take care of anything the changes imply.
 - [x] Update the `MODIFICATION_IMPLEMENTATION.md` file with the current state, including any learnings, surprises, or deviations in the Journal section. Check off any checkboxes of items that have been completed.
 - [ ] Use `git diff` to verify the changes that have been made, and create a suitable commit message for any changes, following any guidelines you have about commit messages. Be sure to properly escape dollar signs and backticks, and present the change message to the user for approval.
 - [ ] Wait for approval. Don't commit the changes or move on to the next phase of implementation until the user approves the commit.
@@ -100,16 +107,16 @@ This plan outlines the steps to implement performance benchmarks for the `base32
 
 ## Phase 4: Finalization
 
-- [ ] Update the `README.md` file for the package with relevant information about the new benchmarks (e.g., how to run them).
-- [ ] Update the `GEMINI.md` file in the project directory so that it still correctly describes the app, its purpose, and implementation details and the layout of the files.
-- [ ] Ask the user to inspect the package and say if they are satisfied with it, or if any modifications are needed.
-- [ ] Create/modify unit tests for testing the code added or modified in this phase, if relevant.
-- [ ] Run the `dart_fix` tool to clean up the code.
-- [ ] Run the `analyze_files` tool one more time and fix any issues.
-- [ ] Run any tests to make sure they all pass.
-- [ ] Run `dart_format` to make sure that the formatting is correct.
-- [ ] Re-read the `MODIFICATION_IMPLEMENTATION.md` file to see what, if anything, has changed in the implementation plan, and if it has changed, take care of anything the changes imply.
-- [ ] Update the `MODIFICATION_IMPLEMENTATION.md` file with the current state, including any learnings, surprises, or deviations in the Journal section. Check off any checkboxes of items that have been completed.
+- [x] Update the `README.md` file for the package with relevant information about the new benchmarks (e.g., how to run them).
+- [x] Update the `GEMINI.md` file in the project directory so that it still correctly describes the app, its purpose, and implementation details and the layout of the files.
+- [x] Ask the user to inspect the package and say if they are satisfied with it, or if any modifications are needed.
+- [x] Create/modify unit tests for testing the code added or modified in this phase, if relevant.
+- [x] Run the `dart_fix` tool to clean up the code.
+- [x] Run the `analyze_files` tool one more time and fix any issues.
+- [x] Run any tests to make sure they all pass.
+- [x] Run `dart_format` to make sure that the formatting is correct.
+- [x] Re-read the `MODIFICATION_IMPLEMENTATION.md` file to see what, if anything, has changed in the implementation plan, and if it has changed, take care of anything the changes imply.
+- [x] Update the `MODIFICATION_IMPLEMENTATION.md` file with the current state, including any learnings, surprises, or deviations in the Journal section. Check off any checkboxes of items that have been completed.
 - [ ] Use `git diff` to verify the changes that have been made, and create a suitable commit message for any changes, following any guidelines you have about commit messages. Be sure to properly escape dollar signs and backticks, and present the change message to the user for approval.
 - [ ] Wait for approval. Don't commit the changes or move on to the next phase of implementation until the user approves the commit.
 - [ ] After committing the change, if an app is running, use the `hot_reload` tool to reload it.
