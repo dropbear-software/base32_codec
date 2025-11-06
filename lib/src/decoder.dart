@@ -21,24 +21,30 @@ final class Base32Decoder extends Converter<String, Uint8List> {
     var bits = 0;
     var value = 0;
 
-    // Remove padding for length calculation
-    final relevantInput = input.endsWith('=')
-        ? input.replaceAll('=', '')
-        : input;
-    final decodedLength = (relevantInput.length * 5) ~/ 8;
+    // Find the length of the string without padding.
+    // We iterate backwards from the end to find the first non-'=' char.
+    // This is O(padding_length), which is extremely fast and constant-time (max 6).
+    var relevantLength = input.length;
+    if (_variant.padding) {
+      while (relevantLength > 0 && input[relevantLength - 1] == '=') {
+        relevantLength--;
+      }
+    }
 
-    // The output buffer.
+    // Pre-calculate the exact decoded length.
+    final decodedLength = (relevantLength * 5) ~/ 8;
     final output = Uint8List(decodedLength);
     var outputIndex = 0;
 
-    for (var i = 0; i < relevantInput.length; i++) {
-      var char = relevantInput[i];
+    // Loop *only* over the relevant (non-padding) part of the string.
+    for (var i = 0; i < relevantLength; i++) {
+      var char = input[i];
       int? charValue;
 
       switch (_variant) {
         case Base32Variant.rfc4648:
         case Base32Variant.rfc4648Hex:
-          // Padding is already removed, so no need to check
+          // No need to check for '=' anymore, as we stop before padding.
           charValue = _variant.getCharacterIndex(char);
         case Base32Variant.crockford:
           char = char.toUpperCase();
@@ -47,13 +53,11 @@ final class Base32Decoder extends Converter<String, Uint8List> {
           charValue = _variant.getCharacterIndex(char);
       }
 
-      // Converts the characters to their 5-bit binary values.
       value = (value << 5) | charValue;
       bits += 5;
 
-      // Converts the 5-bit values to the corresponding 8-bit values.
-      // These values are then stored in the output array.
       if (bits >= 8) {
+        // Write directly to the pre-allocated list
         output[outputIndex++] = (value >> (bits - 8)) & 255;
         bits -= 8;
       }
