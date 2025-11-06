@@ -6,17 +6,21 @@ import 'dart:typed_data';
 import 'package:base32_codec/base32_codec.dart';
 import 'package:benchmark_harness/benchmark_harness.dart';
 
-// Create a new benchmark by extending BenchmarkBase
-class Base32Rfc4648EncodeBenchmark extends BenchmarkBase {
-  final Base32Codec _codec = const Base32Codec();
-  late Uint8List _data;
+// Test data
+final _testData = ascii.encode(
+  'The quick brown fox jumps over the lazy dog. ' * 100,
+);
 
-  Base32Rfc4648EncodeBenchmark() : super('Base32.RFC4648.Encode');
+// Abstract base class for sync encoding
+abstract class _SyncEncodeBenchmark extends BenchmarkBase {
+  final Base32Codec _codec;
+  late final Uint8List _data;
+
+  _SyncEncodeBenchmark(super.name, this._codec);
 
   @override
   void setup() {
-    // Prepare data for encoding. Using a reasonably sized string.
-    _data = ascii.encode('The quick brown fox jumps over the lazy dog. ' * 100);
+    _data = _testData;
   }
 
   @override
@@ -28,18 +32,16 @@ class Base32Rfc4648EncodeBenchmark extends BenchmarkBase {
   void exercise() => run();
 }
 
-class Base32Rfc4648DecodeBenchmark extends BenchmarkBase {
-  final Base32Codec _codec = const Base32Codec();
-  late String _encodedData;
+// Abstract base class for sync decoding
+abstract class _SyncDecodeBenchmark extends BenchmarkBase {
+  final Base32Codec _codec;
+  late final String _encodedData;
 
-  Base32Rfc4648DecodeBenchmark() : super('Base32.RFC4648.Decode');
+  _SyncDecodeBenchmark(super.name, this._codec);
 
   @override
   void setup() {
-    // Prepare data for encoding. Using a reasonably sized string.
-    _encodedData = _codec.encode(
-      ascii.encode('The quick brown fox jumps over the lazy dog. ' * 100),
-    );
+    _encodedData = _codec.encode(_testData);
   }
 
   @override
@@ -51,214 +53,98 @@ class Base32Rfc4648DecodeBenchmark extends BenchmarkBase {
   void exercise() => run();
 }
 
-class Base32Rfc4648HexEncodeBenchmark extends BenchmarkBase {
-  final Base32Codec _codec = const Base32Codec.hex();
-  late Uint8List _data;
+// Abstract base class for async encoding
+abstract class _AsyncEncodeBenchmark extends AsyncBenchmarkBase {
+  final Base32Codec _codec;
 
-  Base32Rfc4648HexEncodeBenchmark() : super('Base32.RFC4648Hex.Encode');
+  _AsyncEncodeBenchmark(super.name, this._codec);
 
   @override
-  void setup() {
-    _data = ascii.encode('The quick brown fox jumps over the lazy dog. ' * 100);
+  Future<void> run() async {
+    final inputStream = Stream.value(_testData);
+    await inputStream.transform(_codec.encoder).last;
   }
-
-  @override
-  void run() {
-    _codec.encode(_data);
-  }
-
-  @override
-  void exercise() => run();
 }
 
-class Base32Rfc4648HexDecodeBenchmark extends BenchmarkBase {
-  final Base32Codec _codec = const Base32Codec.hex();
-  late String _encodedData;
+// Abstract base class for async decoding
+abstract class _AsyncDecodeBenchmark extends AsyncBenchmarkBase {
+  final Base32Codec _codec;
+  late final String _encodedData;
 
-  Base32Rfc4648HexDecodeBenchmark() : super('Base32.RFC4648Hex.Decode');
-
-  @override
-  void setup() {
-    _encodedData = _codec.encode(
-      ascii.encode('The quick brown fox jumps over the lazy dog. ' * 100),
-    );
-  }
-
-  @override
-  void run() {
-    _codec.decode(_encodedData);
-  }
-
-  @override
-  void exercise() => run();
-}
-
-class Base32CrockfordEncodeBenchmark extends BenchmarkBase {
-  final Base32Codec _codec = const Base32Codec.crockford();
-  late Uint8List _data;
-
-  Base32CrockfordEncodeBenchmark() : super('Base32.Crockford.Encode');
-
-  @override
-  void setup() {
-    _data = ascii.encode('The quick brown fox jumps over the lazy dog. ' * 100);
-  }
-
-  @override
-  void run() {
-    _codec.encode(_data);
-  }
-
-  @override
-  void exercise() => run();
-}
-
-class Base32CrockfordDecodeBenchmark extends BenchmarkBase {
-  final Base32Codec _codec = const Base32Codec.crockford();
-  late String _encodedData;
-
-  Base32CrockfordDecodeBenchmark() : super('Base32.Crockford.Decode');
-
-  @override
-  void setup() {
-    _encodedData = _codec.encode(
-      ascii.encode('The quick brown fox jumps over the lazy dog. ' * 100),
-    );
-  }
-
-  @override
-  void run() {
-    _codec.decode(_encodedData);
-  }
-
-  @override
-  void exercise() => run();
-}
-
-// Asynchronous (Stream) Benchmarks
-
-class Base32Rfc4648StreamEncodeBenchmark extends AsyncBenchmarkBase {
-  final Base32Codec _codec = const Base32Codec();
-  late Stream<Uint8List> _inputStream;
-  late Uint8List _data;
-
-  Base32Rfc4648StreamEncodeBenchmark() : super('Base32.RFC4648.StreamEncode');
+  _AsyncDecodeBenchmark(super.name, this._codec);
 
   @override
   Future<void> setup() async {
-    _data = ascii.encode('The quick brown fox jumps over the lazy dog. ' * 100);
+    _encodedData = _codec.encode(_testData);
   }
 
   @override
   Future<void> run() async {
-    _inputStream = Stream.value(_data);
-    await _inputStream.transform(_codec.encoder).last;
+    final inputStream = Stream.value(_encodedData);
+    await inputStream.transform(_codec.decoder).last;
   }
 }
 
-class Base32Rfc4648StreamDecodeBenchmark extends AsyncBenchmarkBase {
-  final Base32Codec _codec = const Base32Codec();
-  late Stream<String> _inputStream;
-  late String _encodedData;
+// Concrete benchmark implementations
 
-  Base32Rfc4648StreamDecodeBenchmark() : super('Base32.RFC4648.StreamDecode');
-
-  @override
-  Future<void> setup() async {
-    _encodedData = _codec.encode(
-      ascii.encode('The quick brown fox jumps over the lazy dog. ' * 100),
-    );
-  }
-
-  @override
-  Future<void> run() async {
-    _inputStream = Stream.value(_encodedData);
-    await _inputStream.transform(_codec.decoder).last;
-  }
+class Base32Rfc4648EncodeBenchmark extends _SyncEncodeBenchmark {
+  Base32Rfc4648EncodeBenchmark()
+    : super('Base32.RFC4648.Encode', const Base32Codec());
 }
 
-class Base32Rfc4648HexStreamEncodeBenchmark extends AsyncBenchmarkBase {
-  final Base32Codec _codec = const Base32Codec.hex();
-  late Stream<Uint8List> _inputStream;
-  late Uint8List _data;
+class Base32Rfc4648DecodeBenchmark extends _SyncDecodeBenchmark {
+  Base32Rfc4648DecodeBenchmark()
+    : super('Base32.RFC4648.Decode', const Base32Codec());
+}
 
+class Base32Rfc4648HexEncodeBenchmark extends _SyncEncodeBenchmark {
+  Base32Rfc4648HexEncodeBenchmark()
+    : super('Base32.RFC4648Hex.Encode', const Base32Codec.hex());
+}
+
+class Base32Rfc4648HexDecodeBenchmark extends _SyncDecodeBenchmark {
+  Base32Rfc4648HexDecodeBenchmark()
+    : super('Base32.RFC4648Hex.Decode', const Base32Codec.hex());
+}
+
+class Base32CrockfordEncodeBenchmark extends _SyncEncodeBenchmark {
+  Base32CrockfordEncodeBenchmark()
+    : super('Base32.Crockford.Encode', const Base32Codec.crockford());
+}
+
+class Base32CrockfordDecodeBenchmark extends _SyncDecodeBenchmark {
+  Base32CrockfordDecodeBenchmark()
+    : super('Base32.Crockford.Decode', const Base32Codec.crockford());
+}
+
+class Base32Rfc4648StreamEncodeBenchmark extends _AsyncEncodeBenchmark {
+  Base32Rfc4648StreamEncodeBenchmark()
+    : super('Base32.RFC4648.StreamEncode', const Base32Codec());
+}
+
+class Base32Rfc4648StreamDecodeBenchmark extends _AsyncDecodeBenchmark {
+  Base32Rfc4648StreamDecodeBenchmark()
+    : super('Base32.RFC4648.StreamDecode', const Base32Codec());
+}
+
+class Base32Rfc4648HexStreamEncodeBenchmark extends _AsyncEncodeBenchmark {
   Base32Rfc4648HexStreamEncodeBenchmark()
-    : super('Base32.RFC4648Hex.StreamEncode');
-
-  @override
-  Future<void> setup() async {
-    _data = ascii.encode('The quick brown fox jumps over the lazy dog. ' * 100);
-  }
-
-  @override
-  Future<void> run() async {
-    _inputStream = Stream.value(_data);
-    await _inputStream.transform(_codec.encoder).last;
-  }
+    : super('Base32.RFC4648Hex.StreamEncode', const Base32Codec.hex());
 }
 
-class Base32Rfc4648HexStreamDecodeBenchmark extends AsyncBenchmarkBase {
-  final Base32Codec _codec = const Base32Codec.hex();
-  late Stream<String> _inputStream;
-  late String _encodedData;
-
+class Base32Rfc4648HexStreamDecodeBenchmark extends _AsyncDecodeBenchmark {
   Base32Rfc4648HexStreamDecodeBenchmark()
-    : super('Base32.RFC4648Hex.StreamDecode');
-
-  @override
-  Future<void> setup() async {
-    _encodedData = _codec.encode(
-      ascii.encode('The quick brown fox jumps over the lazy dog. ' * 100),
-    );
-  }
-
-  @override
-  Future<void> run() async {
-    _inputStream = Stream.value(_encodedData);
-    await _inputStream.transform(_codec.decoder).last;
-  }
+    : super('Base32.RFC4648Hex.StreamDecode', const Base32Codec.hex());
 }
 
-class Base32CrockfordStreamEncodeBenchmark extends AsyncBenchmarkBase {
-  final Base32Codec _codec = const Base32Codec.crockford();
-  late Stream<Uint8List> _inputStream;
-  late Uint8List _data;
-
+class Base32CrockfordStreamEncodeBenchmark extends _AsyncEncodeBenchmark {
   Base32CrockfordStreamEncodeBenchmark()
-    : super('Base32.Crockford.StreamEncode');
-
-  @override
-  Future<void> setup() async {
-    _data = ascii.encode('The quick brown fox jumps over the lazy dog. ' * 100);
-  }
-
-  @override
-  Future<void> run() async {
-    _inputStream = Stream.value(_data);
-    await _inputStream.transform(_codec.encoder).last;
-  }
+    : super('Base32.Crockford.StreamEncode', const Base32Codec.crockford());
 }
 
-class Base32CrockfordStreamDecodeBenchmark extends AsyncBenchmarkBase {
-  final Base32Codec _codec = const Base32Codec.crockford();
-  late Stream<String> _inputStream;
-  late String _encodedData;
-
+class Base32CrockfordStreamDecodeBenchmark extends _AsyncDecodeBenchmark {
   Base32CrockfordStreamDecodeBenchmark()
-    : super('Base32.Crockford.StreamDecode');
-
-  @override
-  Future<void> setup() async {
-    _encodedData = _codec.encode(
-      ascii.encode('The quick brown fox jumps over the lazy dog. ' * 100),
-    );
-  }
-
-  @override
-  Future<void> run() async {
-    _inputStream = Stream.value(_encodedData);
-    await _inputStream.transform(_codec.decoder).last;
-  }
+    : super('Base32.Crockford.StreamDecode', const Base32Codec.crockford());
 }
 
 Future<void> main() async {
