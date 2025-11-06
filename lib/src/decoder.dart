@@ -21,24 +21,29 @@ final class Base32Decoder extends Converter<String, Uint8List> {
     var bits = 0;
     var value = 0;
 
-    // The output buffer.
-    final output = <int>[];
+    // Remove padding for length calculation
+    final relevantInput = input.endsWith('=')
+        ? input.replaceAll('=', '')
+        : input;
+    final decodedLength = (relevantInput.length * 5) ~/ 8;
 
-    for (var i = 0; i < input.length; i++) {
-      var char = input[i];
+    // The output buffer.
+    final output = Uint8List(decodedLength);
+    var outputIndex = 0;
+
+    for (var i = 0; i < relevantInput.length; i++) {
+      var char = relevantInput[i];
       int? charValue;
 
       switch (_variant) {
         case Base32Variant.rfc4648:
         case Base32Variant.rfc4648Hex:
-          // Skip padding characters.
-          if (char == '=') continue;
+          // Padding is already removed, so no need to check
           charValue = _variant.getCharacterIndex(char);
         case Base32Variant.crockford:
           char = char.toUpperCase();
           if (char == 'O') char = '0';
           if (char == 'I' || char == 'L') char = '1';
-          // Crockford alphabet does not have padding.
           charValue = _variant.getCharacterIndex(char);
       }
 
@@ -49,11 +54,11 @@ final class Base32Decoder extends Converter<String, Uint8List> {
       // Converts the 5-bit values to the corresponding 8-bit values.
       // These values are then stored in the output array.
       if (bits >= 8) {
-        output.add((value >> (bits - 8)) & 255);
+        output[outputIndex++] = (value >> (bits - 8)) & 255;
         bits -= 8;
       }
     }
-    return Uint8List.fromList(output);
+    return output;
   }
 
   @override
