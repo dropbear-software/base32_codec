@@ -1,4 +1,5 @@
 // Import BenchmarkBase class.
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -134,11 +135,145 @@ class Base32CrockfordDecodeBenchmark extends BenchmarkBase {
   void exercise() => run();
 }
 
-void main() {
+// Asynchronous (Stream) Benchmarks
+
+class Base32Rfc4648StreamEncodeBenchmark extends AsyncBenchmarkBase {
+  final Base32Codec _codec = const Base32Codec();
+  late Stream<Uint8List> _inputStream;
+  late Uint8List _data;
+
+  Base32Rfc4648StreamEncodeBenchmark() : super('Base32.RFC4648.StreamEncode');
+
+  @override
+  Future<void> setup() async {
+    _data = ascii.encode('The quick brown fox jumps over the lazy dog. ' * 100);
+  }
+
+  @override
+  Future<void> run() async {
+    _inputStream = Stream.value(_data);
+    await _inputStream.transform(_codec.encoder).last;
+  }
+}
+
+class Base32Rfc4648StreamDecodeBenchmark extends AsyncBenchmarkBase {
+  final Base32Codec _codec = const Base32Codec();
+  late Stream<String> _inputStream;
+  late String _encodedData;
+
+  Base32Rfc4648StreamDecodeBenchmark() : super('Base32.RFC4648.StreamDecode');
+
+  @override
+  Future<void> setup() async {
+    _encodedData = _codec.encode(
+      ascii.encode('The quick brown fox jumps over the lazy dog. ' * 100),
+    );
+  }
+
+  @override
+  Future<void> run() async {
+    _inputStream = Stream.value(_encodedData);
+    await _inputStream.transform(_codec.decoder).last;
+  }
+}
+
+class Base32Rfc4648HexStreamEncodeBenchmark extends AsyncBenchmarkBase {
+  final Base32Codec _codec = const Base32Codec.hex();
+  late Stream<Uint8List> _inputStream;
+  late Uint8List _data;
+
+  Base32Rfc4648HexStreamEncodeBenchmark()
+    : super('Base32.RFC4648Hex.StreamEncode');
+
+  @override
+  Future<void> setup() async {
+    _data = ascii.encode('The quick brown fox jumps over the lazy dog. ' * 100);
+  }
+
+  @override
+  Future<void> run() async {
+    _inputStream = Stream.value(_data);
+    await _inputStream.transform(_codec.encoder).last;
+  }
+}
+
+class Base32Rfc4648HexStreamDecodeBenchmark extends AsyncBenchmarkBase {
+  final Base32Codec _codec = const Base32Codec.hex();
+  late Stream<String> _inputStream;
+  late String _encodedData;
+
+  Base32Rfc4648HexStreamDecodeBenchmark()
+    : super('Base32.RFC4648Hex.StreamDecode');
+
+  @override
+  Future<void> setup() async {
+    _encodedData = _codec.encode(
+      ascii.encode('The quick brown fox jumps over the lazy dog. ' * 100),
+    );
+  }
+
+  @override
+  Future<void> run() async {
+    _inputStream = Stream.value(_encodedData);
+    await _inputStream.transform(_codec.decoder).last;
+  }
+}
+
+class Base32CrockfordStreamEncodeBenchmark extends AsyncBenchmarkBase {
+  final Base32Codec _codec = const Base32Codec.crockford();
+  late Stream<Uint8List> _inputStream;
+  late Uint8List _data;
+
+  Base32CrockfordStreamEncodeBenchmark()
+    : super('Base32.Crockford.StreamEncode');
+
+  @override
+  Future<void> setup() async {
+    _data = ascii.encode('The quick brown fox jumps over the lazy dog. ' * 100);
+  }
+
+  @override
+  Future<void> run() async {
+    _inputStream = Stream.value(_data);
+    await _inputStream.transform(_codec.encoder).last;
+  }
+}
+
+class Base32CrockfordStreamDecodeBenchmark extends AsyncBenchmarkBase {
+  final Base32Codec _codec = const Base32Codec.crockford();
+  late Stream<String> _inputStream;
+  late String _encodedData;
+
+  Base32CrockfordStreamDecodeBenchmark()
+    : super('Base32.Crockford.StreamDecode');
+
+  @override
+  Future<void> setup() async {
+    _encodedData = _codec.encode(
+      ascii.encode('The quick brown fox jumps over the lazy dog. ' * 100),
+    );
+  }
+
+  @override
+  Future<void> run() async {
+    _inputStream = Stream.value(_encodedData);
+    await _inputStream.transform(_codec.decoder).last;
+  }
+}
+
+Future<void> main() async {
   Base32Rfc4648EncodeBenchmark().report();
   Base32Rfc4648DecodeBenchmark().report();
   Base32Rfc4648HexEncodeBenchmark().report();
   Base32Rfc4648HexDecodeBenchmark().report();
   Base32CrockfordEncodeBenchmark().report();
   Base32CrockfordDecodeBenchmark().report();
+
+  // Asynchronous benchmarks
+  await Base32Rfc4648StreamEncodeBenchmark().report();
+  await Base32Rfc4648StreamDecodeBenchmark().report();
+  await Base32Rfc4648HexStreamEncodeBenchmark().report();
+  await Base32Rfc4648HexStreamDecodeBenchmark().report();
+  await Base32CrockfordStreamEncodeBenchmark().report();
+  await Base32CrockfordStreamDecodeBenchmark().report();
 }
