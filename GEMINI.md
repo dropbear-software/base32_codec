@@ -13,7 +13,7 @@ This project is a Dart package named `base32_codec`. It provides a flexible and 
 
 # Building and Running
 
-This is a Dart library, so there is no main executable to run. However, you can run the tests to verify its functionality.
+This is a Dart library, so there is no main executable to run. However, you can run the tests and benchmarks to verify its functionality and performance.
 
 ## Running Tests
 
@@ -21,6 +21,14 @@ The project uses the `test` package for testing. To run the tests, use the follo
 
 ```bash
 dart test
+```
+
+## Running Performance Benchmarks
+
+Performance benchmarks are included to measure the speed of encoding and decoding operations across different Base32 variants and conversion types (synchronous and asynchronous). To run them, execute the following command from the project root:
+
+```bash
+dart run benchmark/base32_codec_benchmark.dart
 ```
 
 # Development Conventions
@@ -32,3 +40,7 @@ The project follows the standard Dart and Flutter linting rules, as defined in t
 ## Testing
 
 The project has a comprehensive test suite in the `test` directory. The tests cover all three Base32 variants and include test vectors from RFC 4648 to ensure correctness. The tests also cover the stream-based (chunked) conversion logic.
+
+## Benchmarking
+
+Performance benchmarks are implemented using the `benchmark_harness` package. They cover synchronous and asynchronous encoding/decoding for all three Base32 variants, providing a way to track performance and prevent regressions.

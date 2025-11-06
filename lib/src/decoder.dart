@@ -21,39 +21,48 @@ final class Base32Decoder extends Converter<String, Uint8List> {
     var bits = 0;
     var value = 0;
 
-    // The output buffer.
-    final output = <int>[];
+    // Find the length of the string without padding.
+    // We iterate backwards from the end to find the first non-'=' char.
+    // This is O(padding_length), which is extremely fast and constant-time (max 6).
+    var relevantLength = input.length;
+    if (_variant.padding) {
+      while (relevantLength > 0 && input[relevantLength - 1] == '=') {
+        relevantLength--;
+      }
+    }
 
-    for (var i = 0; i < input.length; i++) {
+    // Pre-calculate the exact decoded length.
+    final decodedLength = (relevantLength * 5) ~/ 8;
+    final output = Uint8List(decodedLength);
+    var outputIndex = 0;
+
+    // Loop *only* over the relevant (non-padding) part of the string.
+    for (var i = 0; i < relevantLength; i++) {
       var char = input[i];
       int? charValue;
 
       switch (_variant) {
         case Base32Variant.rfc4648:
         case Base32Variant.rfc4648Hex:
-          // Skip padding characters.
-          if (char == '=') continue;
+          // No need to check for '=' anymore, as we stop before padding.
           charValue = _variant.getCharacterIndex(char);
         case Base32Variant.crockford:
           char = char.toUpperCase();
           if (char == 'O') char = '0';
           if (char == 'I' || char == 'L') char = '1';
-          // Crockford alphabet does not have padding.
           charValue = _variant.getCharacterIndex(char);
       }
 
-      // Converts the characters to their 5-bit binary values.
       value = (value << 5) | charValue;
       bits += 5;
 
-      // Converts the 5-bit values to the corresponding 8-bit values.
-      // These values are then stored in the output array.
       if (bits >= 8) {
-        output.add((value >> (bits - 8)) & 255);
+        // Write directly to the pre-allocated list
+        output[outputIndex++] = (value >> (bits - 8)) & 255;
         bits -= 8;
       }
     }
-    return Uint8List.fromList(output);
+    return output;
   }
 
   @override
