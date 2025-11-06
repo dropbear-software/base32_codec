@@ -103,6 +103,16 @@ Future<void> main() async {
 }
 ```
 
+## Performance Benchmarks
+
+This package includes a suite of performance benchmarks to measure the speed of encoding and decoding operations across different Base32 variants and conversion types (synchronous and asynchronous).
+
+To run the benchmarks, execute the following command from the project root:
+
+```bash
+dart run benchmark/base32_codec_benchmark.dart
+```
+
 ## Contributing
 
 This package is open source and contributions are welcome!
