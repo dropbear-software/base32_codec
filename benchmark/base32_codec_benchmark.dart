@@ -148,18 +148,29 @@ class Base32CrockfordStreamDecodeBenchmark extends _AsyncDecodeBenchmark {
 }
 
 Future<void> main() async {
-  Base32Rfc4648EncodeBenchmark().report();
-  Base32Rfc4648DecodeBenchmark().report();
-  Base32Rfc4648HexEncodeBenchmark().report();
-  Base32Rfc4648HexDecodeBenchmark().report();
-  Base32CrockfordEncodeBenchmark().report();
-  Base32CrockfordDecodeBenchmark().report();
+  final syncBenchmarks = [
+    Base32Rfc4648EncodeBenchmark(),
+    Base32Rfc4648DecodeBenchmark(),
+    Base32Rfc4648HexEncodeBenchmark(),
+    Base32Rfc4648HexDecodeBenchmark(),
+    Base32CrockfordEncodeBenchmark(),
+    Base32CrockfordDecodeBenchmark(),
+  ];
 
-  // Asynchronous benchmarks
-  await Base32Rfc4648StreamEncodeBenchmark().report();
-  await Base32Rfc4648StreamDecodeBenchmark().report();
-  await Base32Rfc4648HexStreamEncodeBenchmark().report();
-  await Base32Rfc4648HexStreamDecodeBenchmark().report();
-  await Base32CrockfordStreamEncodeBenchmark().report();
-  await Base32CrockfordStreamDecodeBenchmark().report();
+  for (final benchmark in syncBenchmarks) {
+    benchmark.report();
+  }
+
+  final asyncBenchmarks = [
+    Base32Rfc4648StreamEncodeBenchmark(),
+    Base32Rfc4648StreamDecodeBenchmark(),
+    Base32Rfc4648HexStreamEncodeBenchmark(),
+    Base32Rfc4648HexStreamDecodeBenchmark(),
+    Base32CrockfordStreamEncodeBenchmark(),
+    Base32CrockfordStreamDecodeBenchmark(),
+  ];
+
+  for (final benchmark in asyncBenchmarks) {
+    await benchmark.report();
+  }
 }
