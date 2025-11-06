@@ -5,9 +5,9 @@ This project is a Dart package named `base32_codec`. It provides a flexible and 
 ## Key Features
 
 *   **Multiple Base32 Variants:** Supports three popular Base32 alphabets:
-    *   RFC 4648 (the standard)
-    *   RFC 4648 "Hex"
-    *   Crockford's Base32
+    *   [RFC 4648](https://datatracker.ietf.org/doc/html/rfc4648) (the standard)
+    *   [RFC 4648 "Hex"](https://datatracker.ietf.org/doc/html/rfc4648#section-7)
+    *   [Crockford's Base32](http://www.crockford.com/base32.html)
 *   **Stream-Based Conversion:** The API is compatible with Dart's `Stream` and `Codec` interfaces, making it suitable for processing large data sets without loading everything into memory.
 *   **Synchronous Conversion:** For smaller data, the library provides simple `encode` and `decode` methods.
 
