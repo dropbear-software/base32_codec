@@ -31,12 +31,20 @@ final class Base32Decoder extends Converter<String, Uint8List> {
       }
     }
 
-    // Pre-calculate the exact decoded length.
-    final decodedLength = (relevantLength * 5) ~/ 8;
+    // Loop *only* over the relevant (non-padding) part of the string.
+    var effectiveLength = 0;
+    for (var i = 0; i < relevantLength; i++) {
+      final char = input[i];
+      if (_variant == Base32Variant.crockford && char == '-') {
+        continue;
+      }
+      effectiveLength++;
+    }
+
+    final decodedLength = (effectiveLength * 5) ~/ 8;
     final output = Uint8List(decodedLength);
     var outputIndex = 0;
 
-    // Loop *only* over the relevant (non-padding) part of the string.
     for (var i = 0; i < relevantLength; i++) {
       var char = input[i];
       int? charValue;
@@ -47,6 +55,7 @@ final class Base32Decoder extends Converter<String, Uint8List> {
           // No need to check for '=' anymore, as we stop before padding.
           charValue = _variant.getCharacterIndex(char);
         case Base32Variant.crockford:
+          if (char == '-') continue;
           char = char.toUpperCase();
           if (char == 'O') char = '0';
           if (char == 'I' || char == 'L') char = '1';
@@ -92,6 +101,7 @@ class _Base32DecoderSink implements ChunkedConversionSink<String> {
           if (char == '=') continue; // Skip padding
           charValue = _variant.getCharacterIndex(char);
         case Base32Variant.crockford:
+          if (char == '-') continue;
           char = char.toUpperCase();
           if (char == 'O') char = '0';
           if (char == 'I' || char == 'L') char = '1';

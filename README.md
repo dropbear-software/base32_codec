@@ -71,6 +71,9 @@ void main() {
 
   final decoded = codec.decode(encoded);
   print(ascii.decode(decoded)); // foobar
+
+  // Crockford decoding also ignores hyphens for readability.
+  print(ascii.decode(codec.decode('CSQPY-RK1E8'))); // foobar
 }
 ```
 
