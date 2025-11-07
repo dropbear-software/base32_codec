@@ -93,9 +93,11 @@ void main() {
       expect(codec.encode(ascii.encode('fooba')), equals('CSQPYRK1'));
       expect(codec.decode('CSQPYRK1'), equals(ascii.encode('fooba')));
     });
-    test('"foobar"', () {
-      expect(codec.encode(ascii.encode('foobar')), equals('CSQPYRK1E8'));
-      expect(codec.decode('CSQPYRK1E8'), equals(ascii.encode('foobar')));
+    test('"foobar" with hyphens', () {
+      expect(codec.decode('CSQPY-RK1E8'), equals(ascii.encode('foobar')));
+      expect(codec.decode('CSQPY-RK1-E8'), equals(ascii.encode('foobar')));
+      expect(codec.decode('-CSQPYRK1E8-'), equals(ascii.encode('foobar')));
+      expect(codec.decode('--'), equals(ascii.encode('')));
     });
   });
 
