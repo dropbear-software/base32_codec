@@ -101,6 +101,9 @@ void main() {
       expect(codec.decode('CSQPY-RK1E8'), equals(ascii.encode('foobar')));
       expect(codec.decode('CSQPY-RK1-E8'), equals(ascii.encode('foobar')));
       expect(codec.decode('-CSQPYRK1E8-'), equals(ascii.encode('foobar')));
+    });
+
+    test('"Crockford decoding with only hyphens"', () {
       expect(codec.decode('--'), equals(ascii.encode('')));
     });
   });
