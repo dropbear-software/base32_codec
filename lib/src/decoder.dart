@@ -101,6 +101,7 @@ class _Base32DecoderSink implements ChunkedConversionSink<String> {
           if (char == '=') continue; // Skip padding
           charValue = _variant.getCharacterIndex(char);
         case Base32Variant.crockford:
+          if (char == '-') continue;
           char = char.toUpperCase();
           if (char == 'O') char = '0';
           if (char == 'I' || char == 'L') char = '1';

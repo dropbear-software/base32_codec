@@ -161,5 +161,45 @@ void main() {
           .toList();
       expect(decoded, equals(ascii.encode('foobar')));
     });
+
+    test('Crockford decoding with hyphens', () async {
+      final codec = Base32Codec.crockford();
+      final stream = Stream.fromIterable(['CSQPY-', 'RK1E8']);
+      final decoded = await stream
+          .transform(codec.decoder)
+          .expand((x) => x)
+          .toList();
+      expect(decoded, equals(ascii.encode('foobar')));
+    });
+
+    test('Crockford decoding with multiple hyphens', () async {
+      final codec = Base32Codec.crockford();
+      final stream = Stream.fromIterable(['CSQPY-', '-RK1-', 'E8']);
+      final decoded = await stream
+          .transform(codec.decoder)
+          .expand((x) => x)
+          .toList();
+      expect(decoded, equals(ascii.encode('foobar')));
+    });
+
+    test('Crockford decoding with leading/trailing hyphens', () async {
+      final codec = Base32Codec.crockford();
+      final stream = Stream.fromIterable(['-CSQPY', 'RK1E8-']);
+      final decoded = await stream
+          .transform(codec.decoder)
+          .expand((x) => x)
+          .toList();
+      expect(decoded, equals(ascii.encode('foobar')));
+    });
+
+    test('Crockford decoding with only hyphens', () async {
+      final codec = Base32Codec.crockford();
+      final stream = Stream.fromIterable(['-', '-']);
+      final decoded = await stream
+          .transform(codec.decoder)
+          .expand((x) => x)
+          .toList();
+      expect(decoded, equals(ascii.encode('')));
+    });
   });
 }
